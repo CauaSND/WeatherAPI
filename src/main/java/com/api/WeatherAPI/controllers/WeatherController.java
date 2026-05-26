@@ -17,7 +17,7 @@ public class WeatherController {
 
     @GetMapping("/current/{state}/{city}")
     public ResponseEntity<Main> getCurrentWeather(@PathVariable("state") String state, @PathVariable("city") String city) {
-        Main mainData = service.getWeather(state,city);
+        Main mainData = service.getWeatherByCityAndState(state,city);
         return ResponseEntity.ok().body(mainData);
     }
 }
