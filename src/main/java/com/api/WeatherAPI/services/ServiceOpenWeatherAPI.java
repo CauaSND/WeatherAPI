@@ -14,7 +14,7 @@ public class ServiceOpenWeatherAPI implements ServiceRules {
     }
 
     @Override
-    public Main getWeather (String state, String city) {
+    public Main getWeatherByCityAndState (String state, String city) {
         return weatherGateway.getWeatherDetail(state,city);
     }
 }
