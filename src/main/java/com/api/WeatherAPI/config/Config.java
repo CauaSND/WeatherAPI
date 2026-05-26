@@ -1,4 +1,4 @@
-package com.api.WeatherAPI;
+package com.api.WeatherAPI.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
