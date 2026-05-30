@@ -4,7 +4,6 @@ import com.api.WeatherAPI.dtos.Coord;
 import com.api.WeatherAPI.dtos.Main;
 import com.api.WeatherAPI.dtos.Root;
 
-import com.api.WeatherAPI.dtos.Sys;
 import com.api.WeatherAPI.dtos.placeDTOS.PlaceRoot;
 import com.api.WeatherAPI.expection.LocationNotFoundException;
 import com.api.WeatherAPI.expection.WeatherApiException;
@@ -28,21 +27,28 @@ public class OpenWeatherAdapter implements WeatherGateway{
     @Override
     public Main getWeatherDetail (String state,String city) {
         Coord coord = getCoord(state,city);
-        String uri = "https://api.openweathermap.org/data/2.5/weather?lat=" + coord.lat() + "&lon=" + coord.lon() + "&appid=" + apiKey;
+        String uri = "https://api.openweathermap.org/data/2.5/weather?lat=" + coord.lat() + "&lon=" + coord.lon() + "&units=metric&appid=" + apiKey;
         Root root = restTemplate.getForObject(uri,Root.class);
-        if (root == null){
+        if (root == null)
             throw new WeatherApiException("There is no value, API error");
-        }else
+        else
             return root.main;
     }
 
     public Coord getCoord(String state,String city) {
         String uri = "http://api.openweathermap.org/geo/1.0/direct?q=" + city + "&limit=5&appid=" + apiKey;
-        PlaceRoot[] placesRoot = restTemplate.getForObject(uri,PlaceRoot[].class);
-        if (placesRoot == null){
+        PlaceRoot[] placesRoots = restTemplate.getForObject(uri,PlaceRoot[].class);
+        isJsonReturnedNull(placesRoots);
+        return findTheRightCoord(placesRoots,state);
+    }
+
+    private void isJsonReturnedNull(PlaceRoot[] placeRoots){
+        if (placeRoots == null){
             throw new WeatherApiException("There is no value, API error");
         }
-        for (PlaceRoot place : placesRoot){
+    }
+    private Coord findTheRightCoord(PlaceRoot[] placesRoots, String state){
+        for (PlaceRoot place : placesRoots){
             if (place.state == null || place.state.isEmpty())
                 continue;
             String fixState = Normalizer.normalize(place.state,Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
