@@ -4,6 +4,7 @@ import com.api.WeatherAPI.dtos.Coord;
 import com.api.WeatherAPI.dtos.Main;
 import com.api.WeatherAPI.dtos.Root;
 import com.api.WeatherAPI.dtos.placeDTOS.PlaceRoot;
+import com.api.WeatherAPI.expection.WeatherApiException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,8 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.client.RestTemplate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -44,7 +44,7 @@ class OpenWeatherAdapterTest {
     }
 
     @Test
-    void ShouldGetWeatherDetailSucceessfully () {
+    void ShouldGetWeatherDetailSuccessfully () {
         //Given
         when(restTemplate.getForObject(any(String.class), eq(PlaceRoot[].class))).thenReturn(placeRoots);
         when(restTemplate.getForObject(any(String.class), eq(Root.class))).thenReturn(rootTest);
@@ -52,6 +52,20 @@ class OpenWeatherAdapterTest {
         Main main = openWeatherAdapter.getWeatherDetail("sao-paulo", "Osasco");
         //Then
         assertNotNull(main);
+
+    }
+
+    @Test
+    void ShouldGetWeatherDetailFailure () {
+        //Given
+        when(restTemplate.getForObject(any(String.class), eq(PlaceRoot[].class))).thenReturn(placeRoots);
+        when(restTemplate.getForObject(any(String.class), eq(Root.class))).thenReturn(null);
+        //when
+        WeatherApiException weatherApiException = assertThrows(WeatherApiException.class, () ->
+                openWeatherAdapter.getWeatherDetail("sao-paulo", "osasco"));
+        //Then
+
+        assertEquals("There is no value, API error", weatherApiException.getMessage());
 
     }
 
