@@ -1,6 +1,7 @@
 package com.api.WeatherAPI.adapters;
 
 import com.api.WeatherAPI.dtos.Coord;
+import com.api.WeatherAPI.dtos.Main;
 import com.api.WeatherAPI.dtos.Root;
 import com.api.WeatherAPI.dtos.placeDTOS.PlaceRoot;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,16 +33,37 @@ class OpenWeatherAdapterTest {
     @BeforeEach
     void setup () {
         placeRoots = new PlaceRoot[]{PlaceRoot.builder().name("Osasco").lat(-17000.000).lon(18000.00).state("São Paulo").build(), PlaceRoot.builder().name("Osasco").lat(-45000.00).lon(-16000.00).state("Parana").build()};
+        rootTest = Root.builder()
+                .main(
+                        Main.builder()
+                                .feels_like(17.00)
+                                .temp(18.00)
+                                .build()
+                )
+                .build();
+    }
+
+    @Test
+    void ShouldGetWeatherDetailSucceessfully () {
+        //Given
+        when(restTemplate.getForObject(any(String.class), eq(PlaceRoot[].class))).thenReturn(placeRoots);
+        when(restTemplate.getForObject(any(String.class), eq(Root.class))).thenReturn(rootTest);
+        //when
+        Main main = openWeatherAdapter.getWeatherDetail("sao-paulo", "Osasco");
+        //Then
+        assertNotNull(main);
+
     }
 
     @Test
     void ShouldGetCoordSuccessfully () {
+        //Given
         when(restTemplate.getForObject(any(String.class), eq(PlaceRoot[].class))).thenReturn(placeRoots);
 
-        //
+        //When
         final Coord coord = openWeatherAdapter.getCoord("sao-paulo", "Osasco");
 
-        //
+        //Then
         assertNotNull(coord);
         assertEquals(-17000.000, coord.lat());
         assertEquals(18000.00, coord.lon());
