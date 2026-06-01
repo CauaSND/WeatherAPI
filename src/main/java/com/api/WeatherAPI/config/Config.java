@@ -24,7 +24,7 @@ public class Config {
         String password = System.getenv("redisPassword");
 
         String host = (redisURL != null) ? redisURL : "localhost";
-        int port = (redisPORT != null) ? Integer.getInteger(redisPORT) : 6379;
+        int port = (redisPORT != null) ? Integer.parseInt(redisPORT) : 6379;
 
         JedisClientConfig config = DefaultJedisClientConfig.builder()
                 .user("default")
