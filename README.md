@@ -30,9 +30,9 @@ Este projeto não é apenas um "consumidor de API". Ele foi desenhado seguindo b
 O projeto é estruturado para garantir que a infraestrutura possa mudar sem afetar as regras de negócio:
 
 com.api.WeatherAPI
-│
-├── conf/           # Configurações brutas de Infraestrutura (@Configuration Beans)
-├── gateway/        # Interfaces e contratos de inversão de dependência (Strategy)
-├── adapter/        # Implementações reais do mundo externo (OpenWeather API, Redis Cache)
-└── dtos/           # Objetos de transferência de dados mapeados com Jackson/Lombok
+
+conf/           # Configurações brutas de Infraestrutura (@Configuration Beans)
+gateway/        # Interfaces e contratos de inversão de dependência (Strategy)
+adapter/        # Implementações reais do mundo externo (OpenWeather API, Redis Cache)
+dtos/           # Objetos de transferência de dados mapeados com Jackson/Lombok
 
