@@ -1,4 +1,4 @@
 package com.api.WeatherAPI.dtos;
 
-public record Wind(double speed,int deg) {
+public record Wind(Double speed, Integer deg) {
 }

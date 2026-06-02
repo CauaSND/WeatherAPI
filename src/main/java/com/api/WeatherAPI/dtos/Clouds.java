@@ -1,4 +1,4 @@
 package com.api.WeatherAPI.dtos;
 
-public record Clouds(int all) {
+public record Clouds(Integer all) {
 }

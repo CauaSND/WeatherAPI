@@ -1,5 +1,6 @@
 package com.api.WeatherAPI.dtos;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,18 +14,21 @@ import java.util.ArrayList;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Root {
+    @NotNull
     public Coord coord;
     public ArrayList<Weather> weather;
     public String base;
+    @NotNull
     public Main main;
-    public int visibility;
+    public Integer visibility;
     public Wind wind;
     public Rain rain;
     public Clouds clouds;
-    public int dt;
+    public Integer dt;
     public Sys sys;
-    public int timezone;
-    public int id;
+    public Integer timezone;
+    public Integer id;
+    @NotNull
     public String name;
     public int cod;
 }
