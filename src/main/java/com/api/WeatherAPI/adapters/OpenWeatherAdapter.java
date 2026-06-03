@@ -23,31 +23,38 @@ public class OpenWeatherAdapter implements WeatherGateway {
         this.restTemplate = restTemplate;
     }
 
+
     @Override
-    public Main getWeatherDetail (String state, String city) {
-        Coord coord = getCoord(state, city);
+    public Main getWeatherByCityAndState (String state, String city) {
+        PlaceRoot[] citiesAvailable = getCoords(city);
+        Coord coord = findTheRightCoord(citiesAvailable, state);
+
         String uri = "https://api.openweathermap.org/data/2.5/weather?lat=" + coord.lat() + "&lon=" + coord.lon() + "&units=metric&appid=" + apiKey;
         Root root = restTemplate.getForObject(uri, Root.class);
+
         if (root == null)
             throw new WeatherApiException("There is no value, API error");
         else
             return root.main;
     }
 
-    public Coord getCoord (String state, String city) {
+    public PlaceRoot[] getCoords (String city) {
         String uri = "http://api.openweathermap.org/geo/1.0/direct?q=" + city + "&limit=5&appid=" + apiKey;
-        PlaceRoot[] placesRoots = restTemplate.getForObject(uri, PlaceRoot[].class);
-        isJsonReturnedNull(placesRoots);
-        return findTheRightCoord(placesRoots, state);
+
+        PlaceRoot[] citiesAvailable = restTemplate.getForObject(uri, PlaceRoot[].class);
+
+        isJsonReturnedNullOrEmpty(citiesAvailable);
+        return citiesAvailable;
     }
 
-    private void isJsonReturnedNull (PlaceRoot[] placeRoots) {
-        if (placeRoots == null) {
+    private void isJsonReturnedNullOrEmpty (PlaceRoot[] placeRoots) {
+        if (placeRoots == null || placeRoots.length == 0) {
             throw new WeatherApiException("There is no value, API error");
         }
     }
 
-    private Coord findTheRightCoord (PlaceRoot[] placesRoots, String state) {
+
+    Coord findTheRightCoord (PlaceRoot[] placesRoots, String state) {
         for (PlaceRoot place : placesRoots) {
             if (place.state == null || place.state.isEmpty())
                 continue;

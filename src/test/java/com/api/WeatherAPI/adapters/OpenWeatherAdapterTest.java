@@ -4,6 +4,7 @@ import com.api.WeatherAPI.dtos.Coord;
 import com.api.WeatherAPI.dtos.Main;
 import com.api.WeatherAPI.dtos.Root;
 import com.api.WeatherAPI.dtos.placeDTOS.PlaceRoot;
+import com.api.WeatherAPI.expection.LocationNotFoundException;
 import com.api.WeatherAPI.expection.WeatherApiException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,8 @@ class OpenWeatherAdapterTest {
 
     PlaceRoot[] placeRoots;
     Root rootTest;
+    String city = "Osasco";
+    String state = "sao-paulo";
 
     @BeforeEach
     void setup () {
@@ -49,10 +52,9 @@ class OpenWeatherAdapterTest {
         when(restTemplate.getForObject(any(String.class), eq(PlaceRoot[].class))).thenReturn(placeRoots);
         when(restTemplate.getForObject(any(String.class), eq(Root.class))).thenReturn(rootTest);
         //when
-        Main main = openWeatherAdapter.getWeatherDetail("sao-paulo", "Osasco");
+        Main main = openWeatherAdapter.getWeatherByCityAndState("sao-paulo", "Osasco");
         //Then
         assertNotNull(main);
-
     }
 
     @Test
@@ -62,7 +64,7 @@ class OpenWeatherAdapterTest {
         when(restTemplate.getForObject(any(String.class), eq(Root.class))).thenReturn(null);
         //when
         WeatherApiException weatherApiException = assertThrows(WeatherApiException.class, () ->
-                openWeatherAdapter.getWeatherDetail("sao-paulo", "osasco"));
+                openWeatherAdapter.getWeatherByCityAndState("sao-paulo", "osasco"));
         //Then
 
         assertEquals("There is no value, API error", weatherApiException.getMessage());
@@ -75,11 +77,32 @@ class OpenWeatherAdapterTest {
         when(restTemplate.getForObject(any(String.class), eq(PlaceRoot[].class))).thenReturn(placeRoots);
 
         //When
-        final Coord coord = openWeatherAdapter.getCoord("sao-paulo", "Osasco");
+        final PlaceRoot[] citiesAvailable = openWeatherAdapter.getCoords("Osasco");
 
         //Then
-        assertNotNull(coord);
-        assertEquals(-17000.000, coord.lat());
-        assertEquals(18000.00, coord.lon());
+        assertNotNull(citiesAvailable);
+    }
+
+    @Test
+    void ShouldFilterPlacesRootsSuccessfully () {
+
+        //when
+        Coord filtedCoord = openWeatherAdapter.findTheRightCoord(placeRoots, this.state);
+
+        //then
+        assertNotNull(filtedCoord);
+        assertEquals(-17000.000, filtedCoord.lat());
+        assertEquals(18000.00, filtedCoord.lon());
+    }
+
+    @Test
+    void ShouldFilterPlacesRootsFailure () {
+
+        //when
+        LocationNotFoundException locationNotFoundException = assertThrows(LocationNotFoundException.class,
+                () -> openWeatherAdapter.findTheRightCoord(placeRoots, "ceara"));
+
+        //then
+        assertEquals("Yours state or city may has another name, input a different name", locationNotFoundException.getMessage());
     }
 }

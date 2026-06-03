@@ -20,7 +20,7 @@ public class ServiceOpenWeatherAPI implements ServiceRules {
     public Main getWeatherByCityAndState (String state, String city) {
         Main cacheMain = weatherCache.get(city);
         if (cacheMain == null) {
-            Main weatherMain = weatherGateway.getWeatherDetail(state, city);
+            Main weatherMain = weatherGateway.getWeatherByCityAndState(state, city);
             weatherCache.put(city, weatherMain);
             return weatherMain;
         } else {
