@@ -26,19 +26,19 @@ public class OpenWeatherAdapter implements WeatherGateway {
 
     @Override
     public Main getWeatherByCityAndState (String state, String city) {
-        PlaceRoot[] citiesAvailable = getCoords(city);
+
+        PlaceRoot[] citiesAvailable = getCities(city);
         Coord coord = findTheRightCoord(citiesAvailable, state);
 
         String uri = "https://api.openweathermap.org/data/2.5/weather?lat=" + coord.lat() + "&lon=" + coord.lon() + "&units=metric&appid=" + apiKey;
         Root root = restTemplate.getForObject(uri, Root.class);
 
-        if (root == null)
-            throw new WeatherApiException("There is no value, API error");
-        else
-            return root.main;
+        if (root == null) throw new WeatherApiException("There is no value, API error");
+        else return root.main;
     }
 
-    public PlaceRoot[] getCoords (String city) {
+    @Override
+    public PlaceRoot[] getCities (String city) {
         String uri = "http://api.openweathermap.org/geo/1.0/direct?q=" + city + "&limit=5&appid=" + apiKey;
 
         PlaceRoot[] citiesAvailable = restTemplate.getForObject(uri, PlaceRoot[].class);
@@ -56,11 +56,9 @@ public class OpenWeatherAdapter implements WeatherGateway {
 
     Coord findTheRightCoord (PlaceRoot[] placesRoots, String state) {
         for (PlaceRoot place : placesRoots) {
-            if (place.state == null || place.state.isEmpty())
-                continue;
+            if (place.state == null || place.state.isEmpty()) continue;
             String fixState = Normalizer.normalize(place.state, Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
-            if (fixState.replace(" ", "-").equals(state))
-                return new Coord(place.lon, place.lat);
+            if (fixState.replace(" ", "-").equals(state)) return new Coord(place.lon, place.lat);
         }
         throw new LocationNotFoundException("Yours state or city may has another name, input a different name");
     }

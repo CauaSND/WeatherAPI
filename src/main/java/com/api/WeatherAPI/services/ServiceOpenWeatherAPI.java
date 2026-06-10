@@ -3,6 +3,7 @@ package com.api.WeatherAPI.services;
 import com.api.WeatherAPI.adapters.WeatherCache;
 import com.api.WeatherAPI.adapters.WeatherGateway;
 import com.api.WeatherAPI.dtos.Main;
+import com.api.WeatherAPI.dtos.placeDTOS.PlaceRoot;
 import org.springframework.stereotype.Service;
 
 
@@ -25,7 +26,18 @@ public class ServiceOpenWeatherAPI implements ServiceRules {
             return weatherMain;
         } else {
             return cacheMain;
+        }
+    }
 
+    @Override
+    public PlaceRoot[] getCities (String city) {
+        PlaceRoot[] placeRootsCache = weatherCache.getCities(city);
+        if (placeRootsCache == null) {
+            PlaceRoot[] placeRoots = weatherGateway.getCities(city);
+            weatherCache.putCities(city, placeRoots);
+            return placeRoots;
+        } else {
+            return placeRootsCache;
         }
     }
 }

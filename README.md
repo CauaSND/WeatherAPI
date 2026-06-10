@@ -1,38 +1,278 @@
-﻿# 🌤️ Weather API - Spring Boot & Redis Cache
+﻿# Weather API - REST Backend Service
 
-Uma API REST de alta performance desenvolvida em **Java** e **Spring Boot** para consulta de dados climáticos em tempo real. O projeto integra-se à API externa do **OpenWeather**, utilizando uma arquitetura resiliente otimizada por uma camada de cache distribuído com **Redis** e uma suite robusta de testes unitários.
+A high-performance REST API built with **Java** and **Spring Boot** for retrieving real-time weather data. This project integrates with the **OpenWeatherMap API**, implementing a resilient architecture optimized with **Redis** distributed caching and comprehensive unit test coverage.
 
----
-
-## 🚀 Diferenciais de Engenharia do Projeto
-
-Este projeto não é apenas um "consumidor de API". Ele foi desenhado seguindo boas práticas de design de software e arquitetura de produção:
-
-* **Padrão de Projeto Strategy**: Desacoplamento absoluto da camada de cache através de interfaces genéricas. A lógica de negócios não sabe (e não se importa) se o cache está no Redis, em memória ou em um banco relacional.
-* **Otimização com Redis (TTL Eficiente)**: Implementação de cache com tempo de expiração dinâmico (TTL de 15 minutos) usando o cliente Jedis. Evita chamadas desnecessárias à API externa, economiza banda e garante dados sempre atualizados.
-* **Testes Unitários Automatizados**: Suite de testes com **JUnit 5** e **Mockito** cobrindo cenários de sucesso e falha, garantindo alta cobertura de código no Adapter de infraestrutura.
-* **Serialização Customizada**: Uso do **Gson** para transformações eficientes de objetos Java para JSON e vice-versa na persistência do cache.
+**Developed by:** Cauã Silva  
+**Email:** caua.sndias@gmail.com  
+**GitHub:** https://github.com/CauaSND/WeatherAPI
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+## 📋 Project Objective
 
-* **Linguagem:** Java 17 / 21
-* **Framework:** Spring Boot 3.x (Spring Web)
-* **Cache:** Redis & Jedis Client
-* **Utilitários:** Project Lombok, Gson
-* **Testes:** JUnit 5, Mockito
+The Weather API provides a robust backend service for querying current weather information by city and state. The system implements clean architecture patterns with strategy-based dependency injection, enabling flexible infrastructure swapping without affecting business logic. This project demonstrates production-grade Java development practices including efficient caching, proper exception handling, and comprehensive API security.
 
 ---
 
-## 📐 Arquitetura do Sistema (Ports & Adapters / Clean)
+## 🎯 Core Features
 
-O projeto é estruturado para garantir que a infraestrutura possa mudar sem afetar as regras de negócio:
+- **Real-time Weather Data**: Retrieve current temperature, humidity, pressure, and "feels like" metrics via OpenWeatherMap integration
+- **Efficient Caching**: Distributed Redis cache with intelligent TTL strategies (15 minutes for weather, 30 days for geolocation)
+- **State-aware City Matching**: Automatic Unicode normalization to disambiguate cities with identical names across different Brazilian states
+- **Clean Architecture**: Strict separation of concerns with interface-based adapters for seamless infrastructure replacement
+- **Comprehensive Error Handling**: Custom exception hierarchy with global error handler providing structured error responses
+- **Automated Testing**: JUnit 5 + Mockito test suite covering adapter layer and critical business logic
 
-com.api.WeatherAPI
+---
 
-conf/           # Configurações brutas de Infraestrutura (@Configuration Beans)
-gateway/        # Interfaces e contratos de inversão de dependência (Strategy)
-adapter/        # Implementações reais do mundo externo (OpenWeather API, Redis Cache)
-dtos/           # Objetos de transferência de dados mapeados com Jackson/Lombok
+## 🛠️ Technology Stack
 
+| Component | Technology |
+|-----------|-----------|
+| **Language** | Java 21 |
+| **Framework** | Spring Boot 3.x (Spring Web) |
+| **Cache** | Redis 7+ with Jedis Client |
+| **Testing** | JUnit 5, Mockito |
+| **Serialization** | Gson |
+| **Build Tool** | Maven 3.x |
+| **Code Utilities** | Project Lombok |
+
+---
+
+## 📐 System Architecture (Ports & Adapters / Hexagonal)
+
+The codebase follows hexagonal architecture principles to ensure infrastructure agnosticism:
+
+```
+com.api.WeatherAPI/
+├── config/              # Bean configuration & infrastructure setup
+├── controllers/         # HTTP endpoints (routing only)
+├── services/            # Business logic with cache-first pattern
+├── adapters/            # Port implementations
+│   ├── WeatherGateway   # Interface for external API calls
+│   ├── OpenWeatherAdapter   # OpenWeatherMap API integration
+│   ├── WeatherCache     # Interface for caching abstraction
+│   └── RedisCache       # Redis persistence implementation
+├── dtos/                # Data transfer objects (Lombok @Builder)
+└── expection/           # Custom exception hierarchy
+```
+
+**Design Principle**: Services depend only on interfaces (`WeatherGateway`, `WeatherCache`), never on concrete implementations. This allows swapping Redis for in-memory cache without modifying business logic.
+
+---
+
+## 🔌 API Endpoints
+
+### Get Current Weather
+
+```http
+GET /current/{state}/{city}
+```
+
+**Path Parameters:**
+- `state` (string, required): Brazilian state name (normalized format, e.g., `sao-paulo`, `rio-de-janeiro`)
+- `city` (string, required): City name
+
+**Response:**
+```json
+{
+  "temp": 28.5,
+  "feels_like": 30.2,
+  "humidity": 65,
+  "pressure": 1013
+}
+```
+
+**Status Codes:**
+- `200 OK`: Weather data retrieved successfully
+- `404 Not Found`: State/city combination not found
+- `500 Internal Server Error`: OpenWeatherMap API failure or Redis connection issue
+
+---
+
+### Get Available Cities
+
+```http
+GET /location/cities/{city}
+```
+
+**Path Parameters:**
+- `city` (string, required): City name to search
+
+**Response:**
+```json
+[
+  {
+    "name": "São Paulo",
+    "state": "São Paulo",
+    "lat": -23.5505,
+    "lon": -46.6333
+  }
+]
+```
+
+**Status Codes:**
+- `200 OK`: City list retrieved successfully
+- `500 Internal Server Error`: OpenWeatherMap API unavailable
+
+---
+
+## 🔧 Environment Variables
+
+Configure the following environment variables before running:
+
+```bash
+weatherkey     # OpenWeatherMap API key (required)
+redisURL       # Redis host (default: localhost)
+redisPORT      # Redis port (default: 6379)
+redisPassword  # Redis authentication password
+```
+
+---
+
+## 🚀 Build & Deployment
+
+### Prerequisites
+- Java 21+
+- Maven 3.8+
+- Redis 6.0+
+- Valid OpenWeatherMap API key
+
+### Build
+
+```bash
+mvn clean install
+```
+
+### Run
+
+```bash
+mvn spring-boot:run
+```
+
+### Run Tests
+
+```bash
+mvn test
+```
+
+### Run Specific Test Suite
+
+```bash
+mvn test -Dtest=OpenWeatherAdapterTest
+```
+
+### Build Docker Image
+
+```bash
+docker build -t weatherapi:latest .
+```
+
+---
+
+## 📊 Testing Strategy
+
+- **Framework**: JUnit 5 with MockitoExtension
+- **Pattern**: Given-When-Then structure with @BeforeEach fixture setup
+- **Coverage**: Focus on adapter layer and state-matching logic
+- **Mocking**: RestTemplate stubs for OpenWeatherMap API responses
+
+Example test:
+```java
+@ExtendWith(MockitoExtension.class)
+class OpenWeatherAdapterTest {
+    @Mock
+    RestTemplate restTemplate;
+    
+    @InjectMocks
+    OpenWeatherAdapter adapter;
+    
+    @Test
+    void shouldMatchCityByNormalizedState() {
+        // Given: Multiple results for city "Osasco"
+        // When: Filter by state "sao-paulo"
+        // Then: Return coordinates for São Paulo entry
+    }
+}
+```
+
+---
+
+## 🔐 Caching Strategy
+
+| Resource | TTL | Key Format |
+|----------|-----|-----------|
+| Weather Data | 15 minutes | `{cityName}` |
+| City Geolocation | 30 days | `{cityName}Cities` |
+
+The cache-first pattern ensures minimal external API calls and optimal response times:
+
+```
+REQUEST
+  → Cache HIT: Return cached data
+  → Cache MISS: Query OpenWeatherMap → Cache result → Return
+```
+
+---
+
+## 🌍 State Normalization Logic
+
+The system disambiguates cities with identical names across Brazilian states using Unicode-aware normalization:
+
+```java
+// Input: state = "São Paulo"
+// Process:
+//   1. Decompose accents (NFD): "Sa˜o Paulo"
+//   2. Remove combining marks: "Sao Paulo"
+//   3. Convert to lowercase: "sao paulo"
+//   4. Replace spaces with hyphens: "sao-paulo"
+// Output: "sao-paulo"
+```
+
+**Example**: City "Osasco" exists in both São Paulo and Paraná states. The API returns results for both; state parameter selects the correct one.
+
+---
+
+## 🚨 Exception Handling
+
+Custom exceptions with HTTP status mapping:
+
+- **`LocationNotFoundException`** → HTTP 404
+  - Thrown when state/city combination not found
+  
+- **`WeatherApiException`** → HTTP 500
+  - Thrown when OpenWeatherMap API fails or returns null
+
+All exceptions are caught by `@RestControllerAdvice` global handler for consistent error responses.
+
+---
+
+## 📝 Project Structure
+
+- `src/main/java/com/api/WeatherAPI/` — Source code
+  - `controllers/` — REST endpoint handlers
+  - `services/` — Business logic layer
+  - `adapters/` — External integration ports
+  - `config/` — Spring beans and infrastructure configuration
+  - `dtos/` — Data transfer objects
+  - `expection/` — Custom exception classes
+
+- `src/test/java/` — Unit tests
+
+---
+
+## 🤝 Contributing
+
+For feature requests or bug reports, please open an issue on the [GitHub repository](https://github.com/CauaSND/WeatherAPI).
+
+---
+
+## 📄 License
+
+This project is provided as-is for educational and development purposes.
+
+---
+
+**Last Updated:** June 2026  
+**Java Version:** 21  
+**Spring Boot Version:** 3.x

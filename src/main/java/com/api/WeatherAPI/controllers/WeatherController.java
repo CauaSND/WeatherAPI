@@ -1,6 +1,7 @@
 package com.api.WeatherAPI.controllers;
 
 import com.api.WeatherAPI.dtos.Main;
+import com.api.WeatherAPI.dtos.placeDTOS.PlaceRoot;
 import com.api.WeatherAPI.services.ServiceRules;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -17,9 +18,16 @@ public class WeatherController {
         this.service = service;
     }
 
+
     @GetMapping ("/current/{state}/{city}")
     public ResponseEntity<Main> getCurrentWeather (@PathVariable ("state") String state, @PathVariable ("city") String city) {
         Main mainData = service.getWeatherByCityAndState(state, city);
         return ResponseEntity.ok().body(mainData);
+    }
+
+    @GetMapping ("/location/cities/{city}")
+    public ResponseEntity<PlaceRoot[]> getCities (@PathVariable ("city") String city) {
+        PlaceRoot[] placeRoots = service.getCities(city);
+        return ResponseEntity.ok().body(placeRoots);
     }
 }
