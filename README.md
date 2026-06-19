@@ -1,6 +1,8 @@
 ﻿# Weather API - REST Backend Service
 
-A high-performance REST API built with **Java** and **Spring Boot** for retrieving real-time weather data. This project integrates with the **OpenWeatherMap API**, implementing a resilient architecture optimized with **Redis** distributed caching and comprehensive unit test coverage.
+A high-performance REST API built with **Java** and **Spring Boot** for retrieving real-time weather data. This project
+integrates with the **OpenWeatherMap API**, implementing a resilient architecture optimized with **Redis** distributed
+caching and comprehensive unit test coverage.
 
 **Developed by:** Cauã Silva  
 **Email:** caua.sndias@gmail.com  
@@ -10,32 +12,42 @@ A high-performance REST API built with **Java** and **Spring Boot** for retrievi
 
 ## 📋 Project Objective
 
-The Weather API provides a robust backend service for querying current weather information by city and state. The system implements clean architecture patterns with strategy-based dependency injection, enabling flexible infrastructure swapping without affecting business logic. This project demonstrates production-grade Java development practices including efficient caching, proper exception handling, and comprehensive API security.
+The Weather API provides a robust backend service for querying current weather information by city and state. The system
+implements clean architecture patterns with strategy-based dependency injection, enabling flexible infrastructure
+swapping without affecting business logic. This project demonstrates production-grade Java development practices
+including efficient caching, proper exception handling, and comprehensive API security.
 
 ---
 
 ## 🎯 Core Features
 
-- **Real-time Weather Data**: Retrieve current temperature, humidity, pressure, and "feels like" metrics via OpenWeatherMap integration
-- **Efficient Caching**: Distributed Redis cache with intelligent TTL strategies (15 minutes for weather, 30 days for geolocation)
-- **State-aware City Matching**: Automatic Unicode normalization to disambiguate cities with identical names across different Brazilian states
-- **Clean Architecture**: Strict separation of concerns with interface-based adapters for seamless infrastructure replacement
-- **Comprehensive Error Handling**: Custom exception hierarchy with global error handler providing structured error responses
+- **Real-time Weather Data**: Retrieve current temperature, humidity, pressure, and "feels like" metrics via
+  OpenWeatherMap integration
+- **Efficient Caching**: Distributed Redis cache with intelligent TTL strategies (15 minutes for weather, 30 days for
+  geolocation)
+- **State-aware City Matching**: Automatic Unicode normalization to disambiguate cities with identical names across
+  different Brazilian states
+- **Clean Architecture**: Strict separation of concerns with interface-based adapters for seamless infrastructure
+  replacement
+- **Comprehensive Error Handling**: Custom exception hierarchy with global error handler providing structured error
+  responses
 - **Automated Testing**: JUnit 5 + Mockito test suite covering adapter layer and critical business logic
 
 ---
 
 ## 🛠️ Technology Stack
 
-| Component | Technology |
-|-----------|-----------|
-| **Language** | Java 21 |
-| **Framework** | Spring Boot 3.x (Spring Web) |
-| **Cache** | Redis 7+ with Jedis Client |
-| **Testing** | JUnit 5, Mockito |
-| **Serialization** | Gson |
-| **Build Tool** | Maven 3.x |
-| **Code Utilities** | Project Lombok |
+| Component                                 | Technology                   |
+|-------------------------------------------|------------------------------|
+| **Language**                              | Java 21                      |
+| **Framework**                             | Spring Boot 3.x (Spring Web) |
+| **Cache**                                 | Redis 7+ with Jedis Client   |
+| **Testing**                               | JUnit 5, Mockito             |
+| **Serialization**                         | Gson                         |
+| **Build Tool**                            | Maven 3.x                    |
+| **Code Utilities**                        | Project Lombok               |
+| **Thymeleaf** (Renderização do Front-end) 
+| **Docker** (Containerização)              
 
 ---
 
@@ -57,7 +69,8 @@ com.api.WeatherAPI/
 └── expection/           # Custom exception hierarchy
 ```
 
-**Design Principle**: Services depend only on interfaces (`WeatherGateway`, `WeatherCache`), never on concrete implementations. This allows swapping Redis for in-memory cache without modifying business logic.
+**Design Principle**: Services depend only on interfaces (`WeatherGateway`, `WeatherCache`), never on concrete
+implementations. This allows swapping Redis for in-memory cache without modifying business logic.
 
 ---
 
@@ -70,10 +83,12 @@ GET /current/{state}/{city}
 ```
 
 **Path Parameters:**
+
 - `state` (string, required): Brazilian state name (normalized format, e.g., `sao-paulo`, `rio-de-janeiro`)
 - `city` (string, required): City name
 
 **Response:**
+
 ```json
 {
   "temp": 28.5,
@@ -84,6 +99,7 @@ GET /current/{state}/{city}
 ```
 
 **Status Codes:**
+
 - `200 OK`: Weather data retrieved successfully
 - `404 Not Found`: State/city combination not found
 - `500 Internal Server Error`: OpenWeatherMap API failure or Redis connection issue
@@ -97,9 +113,11 @@ GET /location/cities/{city}
 ```
 
 **Path Parameters:**
+
 - `city` (string, required): City name to search
 
 **Response:**
+
 ```json
 [
   {
@@ -112,6 +130,7 @@ GET /location/cities/{city}
 ```
 
 **Status Codes:**
+
 - `200 OK`: City list retrieved successfully
 - `500 Internal Server Error`: OpenWeatherMap API unavailable
 
@@ -130,45 +149,34 @@ redisPassword  # Redis authentication password
 
 ---
 
-## 🚀 Build & Deployment
+## 🐳 Como Rodar o Projeto com Docker (Ambiente Unificado)
 
-### Prerequisites
-- Java 21+
-- Maven 3.8+
-- Redis 6.0+
-- Valid OpenWeatherMap API key
+Este projeto utiliza **Multi-stage Build** no Docker. Toda a infraestrutura (API Spring Boot + Banco de Cache Redis)
+roda de forma isolada dentro da **mesma rede interna do Docker**, garantindo uma comunicação segura, rápida e em
+ambiente simulado de produção.
 
-### Build
+Você não precisa ter o Java, o Maven ou o Redis instalados na sua máquina física; o próprio Docker compila e executa
+todo o ecossistema.
 
-```bash
-mvn clean install
-```
+> ⚠️ **IMPORTANTE (Chave da API):** Este projeto consome dados reais da **OpenWeather**. Para visualizar os dados
+> climáticos reais, você **precisa** ter uma chave de API válida. Caso contrário, os dados não serão carregados em tempo
+> real (retornando dados não reais).
 
-### Run
+### 🚀 Passo a Passo para Execução
 
-```bash
-mvn spring-boot:run
-```
+### 1. Obter uma chave da OpenWeather
 
-### Run Tests
+1. Acesse o site [OpenWeather](https://openweathermap.org/) e crie uma conta gratuita.
+2. Acesse a seção de **API Keys** no seu painel e gere o seu token/chave.
 
-```bash
-mvn test
-```
-
-### Run Specific Test Suite
+### 2. Clonar o repositório e acessar a pasta
 
 ```bash
-mvn test -Dtest=OpenWeatherAdapterTest
-```
+git clone [https://github.com/CauaSND/WeatherAPI.git](https://github.com/CauaSND/WeatherAPI.git)
+cd WeatherAPI
 
-### Build Docker Image
-
-```bash
-docker build -t weatherapi:latest .
-```
-
----
+### 3. Configurar o arquivo de credenciais (.env.example)
+Na raiz do projeto (onde está o arquivo docker-compose.yml), crie um arquivo chamado exatamente .env.example e adicione a sua chave da API e a senha do Redis:
 
 ## 📊 Testing Strategy
 
@@ -178,17 +186,19 @@ docker build -t weatherapi:latest .
 - **Mocking**: RestTemplate stubs for OpenWeatherMap API responses
 
 Example test:
+
 ```java
-@ExtendWith(MockitoExtension.class)
+
+@ExtendWith (MockitoExtension.class)
 class OpenWeatherAdapterTest {
     @Mock
     RestTemplate restTemplate;
-    
+
     @InjectMocks
     OpenWeatherAdapter adapter;
-    
+
     @Test
-    void shouldMatchCityByNormalizedState() {
+    void shouldMatchCityByNormalizedState () {
         // Given: Multiple results for city "Osasco"
         // When: Filter by state "sao-paulo"
         // Then: Return coordinates for São Paulo entry
@@ -200,10 +210,10 @@ class OpenWeatherAdapterTest {
 
 ## 🔐 Caching Strategy
 
-| Resource | TTL | Key Format |
-|----------|-----|-----------|
-| Weather Data | 15 minutes | `{cityName}` |
-| City Geolocation | 30 days | `{cityName}Cities` |
+| Resource         | TTL        | Key Format         |
+|------------------|------------|--------------------|
+| Weather Data     | 15 minutes | `{cityName}`       |
+| City Geolocation | 30 days    | `{cityName}Cities` |
 
 The cache-first pattern ensures minimal external API calls and optimal response times:
 
@@ -229,7 +239,8 @@ The system disambiguates cities with identical names across Brazilian states usi
 // Output: "sao-paulo"
 ```
 
-**Example**: City "Osasco" exists in both São Paulo and Paraná states. The API returns results for both; state parameter selects the correct one.
+**Example**: City "Osasco" exists in both São Paulo and Paraná states. The API returns results for both; state parameter
+selects the correct one.
 
 ---
 
@@ -238,10 +249,10 @@ The system disambiguates cities with identical names across Brazilian states usi
 Custom exceptions with HTTP status mapping:
 
 - **`LocationNotFoundException`** → HTTP 404
-  - Thrown when state/city combination not found
-  
+    - Thrown when state/city combination not found
+
 - **`WeatherApiException`** → HTTP 500
-  - Thrown when OpenWeatherMap API fails or returns null
+    - Thrown when OpenWeatherMap API fails or returns null
 
 All exceptions are caught by `@RestControllerAdvice` global handler for consistent error responses.
 
@@ -250,12 +261,12 @@ All exceptions are caught by `@RestControllerAdvice` global handler for consiste
 ## 📝 Project Structure
 
 - `src/main/java/com/api/WeatherAPI/` — Source code
-  - `controllers/` — REST endpoint handlers
-  - `services/` — Business logic layer
-  - `adapters/` — External integration ports
-  - `config/` — Spring beans and infrastructure configuration
-  - `dtos/` — Data transfer objects
-  - `expection/` — Custom exception classes
+    - `controllers/` — REST endpoint handlers
+    - `services/` — Business logic layer
+    - `adapters/` — External integration ports
+    - `config/` — Spring beans and infrastructure configuration
+    - `dtos/` — Data transfer objects
+    - `expection/` — Custom exception classes
 
 - `src/test/java/` — Unit tests
 
@@ -263,7 +274,8 @@ All exceptions are caught by `@RestControllerAdvice` global handler for consiste
 
 ## 🤝 Contributing
 
-For feature requests or bug reports, please open an issue on the [GitHub repository](https://github.com/CauaSND/WeatherAPI).
+For feature requests or bug reports, please open an issue on
+the [GitHub repository](https://github.com/CauaSND/WeatherAPI).
 
 ---
 
