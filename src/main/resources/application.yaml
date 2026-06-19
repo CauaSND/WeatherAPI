@@ -1,3 +1,14 @@
 spring:
   application:
     name: WeatherAPI
+  thymeleaf:
+    check-template-location: false
+server:
+  address: 0.0.0.0
+  port: 8080
+logging:
+  level:
+    root: INFO
+    org.springframework.web: DEBUG
+    com.example.weatherapi: DEBUG
+

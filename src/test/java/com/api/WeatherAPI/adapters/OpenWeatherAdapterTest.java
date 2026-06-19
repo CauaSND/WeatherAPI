@@ -77,7 +77,7 @@ class OpenWeatherAdapterTest {
         when(restTemplate.getForObject(any(String.class), eq(PlaceRoot[].class))).thenReturn(placeRoots);
 
         //When
-        final PlaceRoot[] citiesAvailable = openWeatherAdapter.getCoords("Osasco");
+        final PlaceRoot[] citiesAvailable = openWeatherAdapter.getCities("Osasco");
 
         //Then
         assertNotNull(citiesAvailable);

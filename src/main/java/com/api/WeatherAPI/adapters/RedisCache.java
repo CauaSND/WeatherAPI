@@ -43,7 +43,7 @@ public class RedisCache implements WeatherCache {
     @Override
     public PlaceRoot[] putCities (String key, PlaceRoot[] placeRoots) {
         String jsonPlaceRoots = gson.toJson(placeRoots);
-        if (jsonPlaceRoots == null || jsonPlaceRoots.isEmpty())
+        if (jsonPlaceRoots.isEmpty())
             return null;
         redisClient.setex(key + "Cities", 2592000L, jsonPlaceRoots);
         return placeRoots;
