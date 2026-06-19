@@ -1,0 +1,13 @@
+include:
+  - path: ./infra.yaml
+services:
+  web:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - weatherkey=${weatherkey}
+      - redisPassword=${redisPassword}
+      - redisPORT=${redisPORT}
+      - redisURL=${redisURL}
+      - redisUser=${redisUser}
