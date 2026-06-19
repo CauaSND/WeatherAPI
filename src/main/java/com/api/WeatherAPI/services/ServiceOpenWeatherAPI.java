@@ -18,7 +18,7 @@ public class ServiceOpenWeatherAPI implements ServiceRules {
     public ServiceOpenWeatherAPI (WeatherGateway weatherGateway, WeatherCache weatherCache) {
         this.weatherGateway = weatherGateway;
         this.weatherCache = weatherCache;
-        this.isUsingFictionalData = System.getenv("weatherkey") == null;
+        this.isUsingFictionalData = System.getenv("weatherkey") == null || System.getenv("weatherkey").isEmpty();
     }
 
     @Override
