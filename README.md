@@ -176,7 +176,23 @@ git clone [https://github.com/CauaSND/WeatherAPI.git](https://github.com/CauaSND
 cd WeatherAPI
 
 ### 3. Configurar o arquivo de credenciais (.env.example)
-Na raiz do projeto (onde está o arquivo docker-compose.yml), crie um arquivo chamado exatamente .env.example e adicione a sua chave da API e a senha do Redis:
+O projeto possui um arquivo de modelo chamado .env.example. Faça uma cópia dele renomeando para .env e altere apenas o valor da sua API Key:
+cp .env.example .env
+Abra o arquivo .env gerado e coloque a sua chave real:
+WEATHER_KEY=colo_aqui_sua_chave_real_da_openweather
+**Nota de segurança:** Coloque o `.env` no `.gitignore` antes de commitar. O arquivo `.env` final gerado por você é ignorado pelo Git para garantir que suas chaves privadas nunca sejam enviadas para o repositório público.
+
+### 4. Subir os Containers
+Com o arquivo .env preenchido na raiz, execute o comando abaixo no terminal para buildar as imagens e iniciar todos os serviços na mesma rede:
+
+docker compose up --build
+
+### 5. Acessar a Interface Web
+Assim que o Spring Boot inicializar com sucesso no terminal, abra o seu navegador e acesse a tela do front-end em Thymeleaf:
+
+👉 http://localhost:8080
+
+
 
 ## 📊 Testing Strategy
 
