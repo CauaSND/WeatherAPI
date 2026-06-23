@@ -178,8 +178,10 @@ cd WeatherAPI
 **The project has a file called .env.example. Do a copy of it and renome to .env and change only the weatherkey:**
 ```bash
 cp .env.example .env
-``` 
+```
+```
 weatherkey=your-key
+```
 **Security note:** Put '.env' in '.gitignore' before committing. The final '.env' file you generate is ignored by Git to ensure your private keys are never pushed to the public repository.
 
 ### 4. Run containers
