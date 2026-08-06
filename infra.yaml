@@ -1,4 +1,32 @@
 services:
   redis:
     image: redis:alpine
-    
+  zabbix-server:
+    image: zabbix/zabbix-server-mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=${mysqlrootpasswd}
+      - MYSQL_USER=scalar
+      - MYSQL_PASSWORD=${mysqlrootpasswd}
+      - ZBX_ALLOWUNSUPPORTEDDBVERSIONS=1
+    depends_on:
+      - mysql-server
+  zabbix-web-nginx-mysql:
+    image: zabbix/zabbix-web-nginx-mysql:latest
+    environment:
+      - MYSQL_USER=scalar
+      - MYSQL_PASSWORD=${mysqlrootpasswd}
+    ports:
+      - "7070:8080"
+    depends_on:
+      - zabbix-server
+  mysql-server:
+    image: mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=${mysqlrootpasswd}
+      - MYSQL_USER=scalar
+      - MYSQL_PASSWORD=${mysqlrootpasswd}
+    volumes:
+      - sql-db:/var/lib/mysql
+
+volumes:
+  sql-db:

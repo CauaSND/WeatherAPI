@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Weather API - Simple Search</title>
+    <link href="style.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+
+    <div class="weather-display">
+        <div class="weather-content" id="weatherContent">
+            <div class="placeholder">
+                <p>☀️</p>
+                <p>Search for a city to see weather information</p>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="search-panel">
+        <div class="search-container">
+            <h1>Weather Search</h1>
+
+            <div class="input-group">
+                <input
+                        autocomplete="off"
+                        class="search-input"
+                        id="cityInput"
+                        placeholder="Type a city name..."
+                        type="text"
+                >
+            </div>
+
+
+            <div class="cities-list hidden" id="citiesList">
+                <div class="loading hidden" id="citiesLoading">Loading...</div>
+                <div class="error hidden" id="citiesError"></div>
+                <ul id="citiesUl"></ul>
+            </div>
+
+
+            <div class="selected-city hidden" id="selectedCity">
+                <p>Selected: <strong id="selectedCityName"></strong></p>
+                <button class="btn btn-primary" id="fetchWeatherBtn">Get Weather</button>
+            </div>
+
+
+            <div class="footer-info">
+                <p><strong>Developed by:</strong> Cauã Silva</p>
+                <p>
+                    <a href="mailto:caua.sndias@gmail.com" target="_blank">📧 caua.sndias@gmail.com</a>
+                </p>
+                <p>
+                    <a href="https://github.com/CauaSND/WeatherAPI" target="_blank">🔗 GitHub Repository</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
+

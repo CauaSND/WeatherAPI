@@ -11,4 +11,9 @@ logging:
     root: INFO
     org.springframework.web: DEBUG
     com.example.weatherapi: DEBUG
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 
