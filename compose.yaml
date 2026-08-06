@@ -11,3 +11,5 @@ services:
       - redisPORT=${redisPORT}
       - redisURL=${redisURL}
       - redisUser=${redisUser}
+      - JAVA_OPTS=-Xms128m -Xmx256m
+

@@ -177,7 +177,7 @@ cd WeatherAPI
 ### 3. Configure your credentials (.env)
 **The project has a file called .env.example. Do a copy of it and renome to .env and change only the weatherkey:**
 ```bash
-cp .env .env
+cp .env.example .env.example
 ```
 ```
 weatherkey=your-key
