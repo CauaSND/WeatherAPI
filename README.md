@@ -10,6 +10,16 @@ caching and comprehensive unit test coverage.
 
 ---
 
+## 🚀 Live Demo
+
+The API is deployed and running in **production**, secured with **HTTPS**:
+
+👉 **https://weathercaca.duckdns.org**
+
+Feel free to open it up and try the endpoints below directly — no local setup required.
+
+---
+
 ## 📋 Project Objective
 
 The Weather API provides a robust backend service for querying current weather information by city and state. The system
@@ -47,7 +57,9 @@ including efficient caching, proper exception handling, and comprehensive API se
 | **Build Tool**                            | Maven 3.x                    |
 | **Code Utilities**                        | Project Lombok               |
 | **Thymeleaf** (Renderização do Front-end) 
-| **Docker** (Containerização)              
+| **Docker** (Containerização)              |
+| **Observability**                         | Prometheus + Grafana         |
+| **Deployment**                            | Production, HTTPS via DuckDNS |
 
 ---
 
@@ -136,6 +148,23 @@ GET /location/cities/{city}
 
 ---
 
+## 📈 Observability
+
+The production deployment ships with a full monitoring stack — the application is instrumented with **Spring Boot
+Actuator**, scraped by **Prometheus**, and visualized in **Grafana**.
+
+**What's tracked:**
+
+- **JVM Memory** — Eden Space, Survivor Space, and Tenured Gen usage over time, so GC behavior and memory pressure
+  are visible at a glance
+- **Disk Space** — Free disk bytes tracked continuously to catch storage issues before they become outages
+- **Service Health** — A live `UP` / `HEALTHY` status panel backed by Actuator's health endpoint
+
+This isn't just a "it works on my machine" project — it's set up the way a production service should be: instrumented,
+scraped, and observable in real time.
+
+---
+
 ## 🔧 Environment Variables
 
 Configure the following environment variables before running:
@@ -149,7 +178,11 @@ redisPassword  # Redis authentication password
 
 ---
 
-## 🐳 running with Docker
+## 🐳 Running Locally with Docker
+
+> Want to skip local setup entirely? The API is already live in production at
+> [https://weathercaca.duckdns.org](https://weathercaca.duckdns.org) — see [Live Demo](#-live-demo) above. The steps
+> below are for running your own instance locally.
 
 This is a **Multi-stage Build** in Docker, The entire instructure (API Spring Boot + Cache Redis) runs isolated within the same Docker network 
 , make a safe comunication, fast and in a simulation enviroment  
@@ -177,7 +210,7 @@ cd WeatherAPI
 ### 3. Configure your credentials (.env)
 **The project has a file called .env.example. Do a copy of it and renome to .env and change only the weatherkey:**
 ```bash
-cp .env .env
+cp .env.example .env.example
 ```
 ```
 weatherkey=your-key
@@ -304,6 +337,6 @@ This project is provided as-is for educational and development purposes.
 
 ---
 
-**Last Updated:** June 2026  
+**Last Updated:** August 2026  
 **Java Version:** 21  
 **Spring Boot Version:** 3.x
