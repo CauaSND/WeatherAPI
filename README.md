@@ -163,7 +163,7 @@ Actuator**, scraped by **Prometheus**, and visualized in **Grafana**.
 This isn't just a "it works on my machine" project — it's set up the way a production service should be: instrumented,
 scraped, and observable in real time.
 
----
+![Grafana Dashboard](grafana.png)
 
 ## 🔧 Environment Variables
 
